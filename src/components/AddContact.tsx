@@ -1,3 +1,4 @@
+import { StyleSheet } from "react-native";
 import { Text } from "react-native-gesture-handler";
 
 type propsContact= {
@@ -8,12 +9,24 @@ type propsContact= {
 function AddContact( props: propsContact ) {
     return(
         <>
-        <Text>Nom : {props.nom}</Text>
-         <Text>Telephone : {props.telephone}</Text>
+        <Text style={styles.titre}>Nom : {props.nom}</Text>
+         <Text style={styles.text}>Telephone : {props.telephone}</Text>
         </>
     );
 }
 
-
+const styles = StyleSheet.create({
+  titre: {
+    color: 'black',
+     fontSize: 18,
+      fontWeight: '600', 
+      padding: 10,
+  },
+   text: {
+    color: 'black',
+     fontSize: 18,
+      padding: 10,
+  }
+});
 
 export default AddContact;
