@@ -6,11 +6,11 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { Alert, Button, FlatList, Text, TextInput, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs'; 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AddContact from './src/components/AddContact';
 
 type RootTabParamList = {
@@ -47,16 +47,21 @@ function Accueil() {
     loadContacts();
   }, []);
 
-  const loadContacts = async () => {
-    try {
-      const data = await AsyncStorage.getItem('contacts');
-      if (data) {
-        setContacts(JSON.parse(data));
-      }
-    } catch (error) {
-      console.error('Erreur chargement contacts:', error);
-    }
-  };
+ const loadContacts = async () => {
+  try {
+    const data = await AsyncStorage.getItem('contacts');
+    setContacts(data ? JSON.parse(data) : []);
+  } catch (error) {
+    console.error('Erreur chargement contacts:', error);
+    Alert.alert('Erreur', 'Impossible de charger les contacts');
+  }
+};
+
+  useFocusEffect(
+  useCallback(() => {
+    loadContacts();
+  }, [])
+);
 
   return (
     <View style={{ padding: 20, flex: 1 }}>
