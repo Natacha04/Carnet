@@ -14,9 +14,11 @@ import { } from 'react-native';
 function App() {
  
   return (
+    <>
      <NavigationContainer>
       <AppNavigator />
     </NavigationContainer>
+     </>
   );
 }
 
