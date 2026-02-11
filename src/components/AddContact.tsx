@@ -8,7 +8,8 @@ type propsContact= {
 function AddContact( props: propsContact ) {
     return(
         <>
-        <Text>{props.nom}{props.telephone}</Text>
+        <Text>Nom : {props.nom}</Text>
+         <Text>Telephone : {props.telephone}</Text>
         </>
     );
 }
