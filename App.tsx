@@ -88,7 +88,7 @@ function Contact() {
   const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Contact'>['navigation']>();
 
   async function add() {
-    // Validation
+
     if (!nom.trim() || !telephone.trim()) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');
       return;
@@ -107,17 +107,14 @@ function Contact() {
         id: Date.now().toString()
       };
 
-      // Récupérer contacts existants
       const existingData = await AsyncStorage.getItem('contacts');
       const contacts: Contact[] = existingData ? JSON.parse(existingData) : [];
       
-      // Ajouter nouveau contact
       contacts.push(newContact);
       await AsyncStorage.setItem('contacts', JSON.stringify(contacts));
       
       Alert.alert('Succès', 'Contact ajouté avec succès');
       
-      // Reset formulaire et retour Home
       setNom('');
       setTelephone('');
       navigation.navigate('Home');
