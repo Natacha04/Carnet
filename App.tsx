@@ -5,27 +5,19 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import AddContact from './src/components/AddContact';
+import Details from './src/components/Details';
+import HomeComponent from './src/components/HomeComponent';
+import { NavigationContainer } from '@react-navigation/native';
+import { } from 'react-native';
 
 function App() {
  
   return (
-  
+     <NavigationContainer>
+      <AppNavigator />
+    </NavigationContainer>
   );
 }
-
-function AppContent() {
- 
-  return (
-  
-  );
-}
-
-
 
 export default App;
