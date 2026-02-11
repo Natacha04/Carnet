@@ -9,19 +9,13 @@ type propsContact= {
 function AddContact( props: propsContact ) {
     return(
         <>
-        <Text style={styles.titre}>Nom : {props.nom}</Text>
+        <Text style={{ color: 'black', fontSize: 18, fontWeight: '600', padding: 10 }} >Nom : {props.nom}</Text>
          <Text style={styles.text}>Telephone : {props.telephone}</Text>
         </>
     );
 }
 
 const styles = StyleSheet.create({
-  titre: {
-    color: 'black',
-     fontSize: 18,
-      fontWeight: '600', 
-      padding: 10,
-  },
    text: {
     color: 'black',
      fontSize: 18,
