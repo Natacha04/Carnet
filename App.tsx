@@ -11,63 +11,85 @@ import Details from './src/components/Details';
 import HomeComponent from './src/components/HomeComponent';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { Button, FlatList, ScrollView, Text, TextInput } from 'react-native';
+import { Button, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs'; // Types pour Tab Navigator [web:18]
+
+// Définir les types des paramètres du Tab Navigator
+type RootTabParamList = {
+  Home: undefined;
+  Contact: undefined;
+  Details: undefined;
+};
 
 function App() {
+  const Tab = createMaterialTopTabNavigator<RootTabParamList>(); // Types appliqués au navigator [web:18]
 
-  const Tab = createMaterialTopTabNavigator();
- 
   return (
-    <>
-     <NavigationContainer>
+    <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen name="Home" component={Accueil} />
         <Tab.Screen name="Contact" component={Contact} />
-        <Tab.Screen name="Détails" component={Details} />
+        <Tab.Screen name="Details" component={DetailsPlus} />
       </Tab.Navigator>
     </NavigationContainer>
-     </>
   );
 }
 
 function Contact() {
+  const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Contact'>['navigation']>();
   return (
     <>
-      <AddContact nom='Natacha' telephone={459657855}>
-      </AddContact>
-      <AddContact nom='Natacha' telephone={459657855}>
-      </AddContact>
-      <AddContact nom='Natacha' telephone={459657855}>
-      </AddContact>
+      <AddContact nom='Natacha' telephone={459657855} />
+      <AddContact nom='Natacha' telephone={459657855} />
+      <AddContact nom='Natacha' telephone={459657855} />
+      <Button 
+        title="Home" 
+        onPress={() => navigation.navigate('Home')}
+      />
+      <Button 
+        title="Details" 
+        onPress={() => navigation.navigate('Details')}
+      />
     </>
-  )
+  );
 }
 
+// Typage du composant Accueil
 function Accueil() {
+  // Types inférés automatiquement grâce au ParamList
+  const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Home'>['navigation']>();
+
   return (
     <>
-      <Button title="Contact" onPress={Add} />
-      <Button title="Détails" onPress={Get} />
+      <Button 
+        title="Ajouter Contact" 
+        onPress={() => navigation.navigate('Contact')}
+      />
+      <Button 
+        title="Details" 
+        onPress={() => navigation.navigate('Details')}
+      />
     </>
-  )
-
+  );
 }
 
- async function Add() {
-  try {
-    await AsyncStorage.setItem('mykey', 'myvalue');
-  } catch (error) {
-    console.error(error);
-  }
-}
+function DetailsPlus() {
+  // Types inférés automatiquement grâce au ParamList
+  const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Details'>['navigation']>();
 
-async function Get() {
-  try {
-    const value = await AsyncStorage.getItem('mykey');
-    console.log(value);
-  } catch (error) {
-    console.error(error);
-  }
+  return (
+    <>
+      <Button 
+        title="Ajouter Contact" 
+        onPress={() => navigation.navigate('Contact')}
+      />
+      <Button 
+        title="Home" 
+        onPress={() => navigation.navigate('Home')}
+      />
+    </>
+  );
 }
 
 export default App;
