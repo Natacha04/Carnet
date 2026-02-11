@@ -1,20 +1,17 @@
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
- *
  * @format
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AddContact from './src/components/AddContact';
-import Details from './src/components/Details';
-import HomeComponent from './src/components/HomeComponent';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { Button, Text, TextInput } from 'react-native';
+import { Alert, Button, FlatList, Text, TextInput, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs'; 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import AddContact from './src/components/AddContact';
 
 type RootTabParamList = {
   Home: undefined;
@@ -22,9 +19,13 @@ type RootTabParamList = {
   Details: undefined;
 };
 
-function App() {
+type Contact = {
+  nom: string;
+  telephone: number;
+  id: string;
+};
 
-  
+function App() {
   const Tab = createMaterialTopTabNavigator<RootTabParamList>();
 
   return (
@@ -38,71 +39,136 @@ function App() {
   );
 }
 
-function Contact() {
-  const [nom, setData] = useState('');
-  const [telephone, setData2] = useState('');
-  function handleData(texte: string) {
-    setData(texte);
-  }
-  function handleData2(texte: number) {
-    setData2(texte);
-  }
-  const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Contact'>['navigation']>();
-  return (
-    <>
-      <TextInput placeholder='Saisir votre nom' onChangeText={handleData}></TextInput>
-          <Text>Nom : {nom}</Text>
-          <TextInput placeholder='Saisir votre numéro de téléphone' onChangeText={handleData2}></TextInput>
-          <Text>Téléphone : {telephone}</Text>
-           <Button title="Ajouter" onPress={add} />
-      <AddContact nom='Natacha' telephone={459657855} />
-      <AddContact nom='Natacha' telephone={459657855} />
-      <AddContact nom='Natacha' telephone={459657855} />
-      <Button 
-        title="Home" 
-        onPress={() => navigation.navigate('Home')}
-      />
-      <Button 
-        title="Details" 
-        onPress={() => navigation.navigate('Details')}
-      />
-    </>
-  );
-}
-
-async function add() {
-  try {
-    await AsyncStorage.setItem('mykey', 'myvalue');
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Typage du composant Accueil
 function Accueil() {
-  // Types inférés automatiquement grâce au ParamList
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Home'>['navigation']>();
 
+  useEffect(() => {
+    loadContacts();
+  }, []);
+
+  const loadContacts = async () => {
+    try {
+      const data = await AsyncStorage.getItem('contacts');
+      if (data) {
+        setContacts(JSON.parse(data));
+      }
+    } catch (error) {
+      console.error('Erreur chargement contacts:', error);
+    }
+  };
+
   return (
-    <>
+    <View style={{ padding: 20, flex: 1 }}>
       <Button 
         title="Ajouter Contact" 
         onPress={() => navigation.navigate('Contact')}
       />
-      <Button 
-        title="Details" 
-        onPress={() => navigation.navigate('Details')}
+      
+      <FlatList
+        data={contacts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <AddContact nom={item.nom} telephone={item.telephone} />
+        )}
+        style={{ marginTop: 20 }}
       />
-    </>
+    </View>
+  );
+}
+
+function Contact() {
+  const [nom, setNom] = useState<string>('');
+  const [telephone, setTelephone] = useState<string>('');
+  const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Contact'>['navigation']>();
+
+  async function add() {
+    // Validation
+    if (!nom.trim() || !telephone.trim()) {
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
+      return;
+    }
+
+    try {
+      const phoneNumber = parseInt(telephone.replace(/\D/g, '')) || 0;
+      if (phoneNumber === 0) {
+        Alert.alert('Erreur', 'Numéro de téléphone invalide');
+        return;
+      }
+
+      const newContact: Contact = {
+        nom: nom.trim(),
+        telephone: phoneNumber,
+        id: Date.now().toString()
+      };
+
+      // Récupérer contacts existants
+      const existingData = await AsyncStorage.getItem('contacts');
+      const contacts: Contact[] = existingData ? JSON.parse(existingData) : [];
+      
+      // Ajouter nouveau contact
+      contacts.push(newContact);
+      await AsyncStorage.setItem('contacts', JSON.stringify(contacts));
+      
+      Alert.alert('Succès', 'Contact ajouté avec succès');
+      
+      // Reset formulaire et retour Home
+      setNom('');
+      setTelephone('');
+      navigation.navigate('Home');
+      
+    } catch (error) {
+      console.error('Erreur ajout contact:', error);
+      Alert.alert('Erreur', 'Erreur lors de l\'ajout du contact');
+    }
+  }
+
+  return (
+    <View style={{ padding: 20 }}>
+      <TextInput 
+        placeholder="Saisir votre nom" 
+        value={nom}
+        onChangeText={setNom}
+        style={{ 
+          borderWidth: 1, 
+          borderColor: '#ccc', 
+          padding: 10, 
+          marginBottom: 10,
+          borderRadius: 5
+        }}
+      />
+      <Text style={{ marginBottom: 10, fontSize: 16 }}>Nom : {nom}</Text>
+      
+      <TextInput 
+        placeholder="Saisir votre numéro de téléphone" 
+        value={telephone}
+        keyboardType="phone-pad"
+        onChangeText={setTelephone}
+        style={{ 
+          borderWidth: 1, 
+          borderColor: '#ccc', 
+          padding: 10, 
+          marginBottom: 10,
+          borderRadius: 5
+        }}
+      />
+      <Text style={{ marginBottom: 20, fontSize: 16 }}>Téléphone : {telephone}</Text>
+      
+      <Button title="Ajouter" onPress={add} />
+      
+      <Button 
+        title="Home" 
+        onPress={() => navigation.navigate('Home')}
+      />
+    </View>
   );
 }
 
 function DetailsPlus() {
-  // Types inférés automatiquement grâce au ParamList
   const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Details'>['navigation']>();
 
   return (
-    <>
+    <View style={{ padding: 20 }}>
       <Button 
         title="Ajouter Contact" 
         onPress={() => navigation.navigate('Contact')}
@@ -111,7 +177,7 @@ function DetailsPlus() {
         title="Home" 
         onPress={() => navigation.navigate('Home')}
       />
-    </>
+    </View>
   );
 }
 
