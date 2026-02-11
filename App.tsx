@@ -5,7 +5,7 @@
  * @format
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage/lib/typescript/AsyncStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddContact from './src/components/AddContact';
 import Details from './src/components/Details';
 import HomeComponent from './src/components/HomeComponent';
@@ -21,23 +21,23 @@ function App() {
     <>
      <NavigationContainer>
       <Tab.Navigator>
-        <Tab.Screen name="Contact" component={Accueil} />
+        <Tab.Screen name="Home" component={Accueil} />
+        <Tab.Screen name="Contact" component={Contact} />
         <Tab.Screen name="Détails" component={Details} />
-        <Tab.Screen name="Ajout" component={AddContact} />
       </Tab.Navigator>
     </NavigationContainer>
      </>
   );
 }
 
-function Home() {
+function Contact() {
   return (
     <>
-      <AddContact nom='Natacha' telephone='0459657855'>
+      <AddContact nom='Natacha' telephone={459657855}>
       </AddContact>
-      <AddContact nom='Natacha' telephone='0459657855'>
+      <AddContact nom='Natacha' telephone={459657855}>
       </AddContact>
-      <AddContact nom='Natacha' telephone='0459657855'>
+      <AddContact nom='Natacha' telephone={459657855}>
       </AddContact>
     </>
   )
@@ -46,8 +46,8 @@ function Home() {
 function Accueil() {
   return (
     <>
-      <Button title="Ajouter" onPress={Add} />
-      <Button title="Obtenir" onPress={Get} />
+      <Button title="Contact" onPress={Add} />
+      <Button title="Détails" onPress={Get} />
     </>
   )
 
