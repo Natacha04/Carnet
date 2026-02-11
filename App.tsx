@@ -11,11 +11,11 @@ import Details from './src/components/Details';
 import HomeComponent from './src/components/HomeComponent';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { Button, Text } from 'react-native';
+import { Button, Text, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import type { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs'; // Types pour Tab Navigator [web:18]
+import type { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs'; 
+import { useState } from 'react';
 
-// Définir les types des paramètres du Tab Navigator
 type RootTabParamList = {
   Home: undefined;
   Contact: undefined;
@@ -23,7 +23,9 @@ type RootTabParamList = {
 };
 
 function App() {
-  const Tab = createMaterialTopTabNavigator<RootTabParamList>(); // Types appliqués au navigator [web:18]
+
+  
+  const Tab = createMaterialTopTabNavigator<RootTabParamList>();
 
   return (
     <NavigationContainer>
@@ -37,9 +39,18 @@ function App() {
 }
 
 function Contact() {
+  const [data, setData] = useState('');
+  function handleData(texte: string) {
+    setData(texte);
+  }
   const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Contact'>['navigation']>();
   return (
     <>
+      <TextInput placeholder='Saisir votre nom' onChangeText={handleData}></TextInput>
+          <Text>Nom : {nom}</Text>
+          <TextInput placeholder='Saisir votre numéro de téléphone' onChangeText={handleData}></TextInput>
+          <Text>Téléphone : {telephone}</Text>
+           <Button title="Ajouter" onPress={add} />
       <AddContact nom='Natacha' telephone={459657855} />
       <AddContact nom='Natacha' telephone={459657855} />
       <AddContact nom='Natacha' telephone={459657855} />
@@ -53,6 +64,14 @@ function Contact() {
       />
     </>
   );
+}
+
+async function add() {
+  try {
+    await AsyncStorage.setItem('mykey', 'myvalue');
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // Typage du composant Accueil
