@@ -39,16 +39,20 @@ function App() {
 }
 
 function Contact() {
-  const [data, setData] = useState('');
+  const [nom, setData] = useState('');
+  const [telephone, setData2] = useState('');
   function handleData(texte: string) {
     setData(texte);
+  }
+  function handleData2(texte: number) {
+    setData2(texte);
   }
   const navigation = useNavigation<MaterialTopTabScreenProps<RootTabParamList, 'Contact'>['navigation']>();
   return (
     <>
       <TextInput placeholder='Saisir votre nom' onChangeText={handleData}></TextInput>
           <Text>Nom : {nom}</Text>
-          <TextInput placeholder='Saisir votre numéro de téléphone' onChangeText={handleData}></TextInput>
+          <TextInput placeholder='Saisir votre numéro de téléphone' onChangeText={handleData2}></TextInput>
           <Text>Téléphone : {telephone}</Text>
            <Button title="Ajouter" onPress={add} />
       <AddContact nom='Natacha' telephone={459657855} />
